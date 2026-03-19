@@ -16,9 +16,10 @@ int square(int base, int expoente){
 
 polinomio * poli_create(int grau){
     // TODO: Implemente aqui a solucao para operacao create
-    polinomio aux = {calloc((grau + 1), sizeof(int)), grau, 0};
-    polinomio *p = NULL;
-    *p = aux;
+    polinomio *p = (polinomio *) malloc(sizeof(polinomio));
+    p->coeficientes = calloc(grau + 1, sizeof(int));
+    p->grau = grau;
+    p->termos = 0;
     return p;
 }
 
@@ -38,7 +39,7 @@ int poli_ins_termo(polinomio *p, int exp, int coef) {
 
 int poli_get_termo(polinomio *p, int exp, int *coef){
     // TODO: Implemente aqui a solucao para operacao get coeficiente
-    if (exp < 0 || exp > p->grau ||  p->coeficientes[exp] == 0) return 0;
+    if (exp < 0 || exp > p->grau || p->coeficientes[exp] == 0) return 0;
     *coef = p->coeficientes[exp];
     return 1;
 }
