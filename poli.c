@@ -8,7 +8,7 @@ int square(int base, int expoente){
     if(expoente == 0){return 1;}
     
     int resultado = 1;    
-    for(int i = 0; i <= expoente ; i++){
+    for(int i = 0; i < expoente ; i++){
         resultado *= base;
     }
     return resultado;
@@ -47,11 +47,11 @@ int poli_get_termo(polinomio *p, int exp, int *coef){
 int calcula_px(polinomio *p, int x){
     int resultado = 0;
     
-    for(int i = 0; i <= p->grau; i++){
+    for(int i = p->grau; i >= 0; i--){
         if(p->coeficientes[i] == 0){
             continue;
         }
-        resultado += p->coeficientes[p->grau-i]*square(x, p->grau-i);
+        resultado += p->coeficientes[i] * square(x, i);
     }
     
     return resultado;
@@ -59,27 +59,25 @@ int calcula_px(polinomio *p, int x){
 
 polinomio * poli_soma(polinomio *p, polinomio *q){
     // TODO: Implemente aqui a solucao para operacao que soma dois polinomios e gera um terceiro
-    int maiorGrau = 0;
+    int maiorGrau;
+    polinomio *menor, *maior;
     polinomio *pq;
-    if (p->grau > q->grau){
+    if (p->grau > q->grau) {
         pq = poli_create(p->grau);
-        maiorGrau = p->grau;
-    }
-    else{
+        maior = p;
+        menor = q;
+    } else {
         pq = poli_create(q->grau);
-        maiorGrau = q->grau;
+        maior = q;
+        menor = p;
     }
-    for (int i = 0; i < maiorGrau; i++)
-    {
-        if (!(i > p->grau) ){
-            if(!(p->coeficientes[i] == 0)){
-                pq->coeficientes[i] += p->coeficientes[i];
-            }
-        }
-        if (!(i > q->grau) ){
-            if(!(q->coeficientes[i] == 0)){
-                pq->coeficientes[i] += q->coeficientes[i];
-            }
+    maiorGrau = pq->grau;
+
+    for (int i = maiorGrau; i >= 0; i--) {
+        if (i > menor->grau) {
+            pq->coeficientes[i] = maior->coeficientes[i];
+        } else {
+            pq->coeficientes[i] = maior->coeficientes[i] + menor->coeficientes[i];
         }
     }
     
@@ -88,14 +86,13 @@ polinomio * poli_soma(polinomio *p, polinomio *q){
 
 polinomio * poli_mult(polinomio *p, polinomio *q){
     // TODO: Implemente aqui a solucao para operacao que multiplica dois polinomios e gera um terceiro
-    int multiploGrau = 0;
     polinomio *pq;
-    multiploGrau = p->grau + q->grau;
+    int multiploGrau = p->grau + q->grau;
     pq = poli_create(multiploGrau);
     
-    for (int i = 0; i < p->grau; i++)
+    for (int i = p->grau; i >= 0; i--)
     {
-        for (int j = 0; j < q->grau; j++)
+        for (int j = q->grau; j >= 0; j--)
         {
             pq->coeficientes[i+j] += p->coeficientes[i]*q->coeficientes[j];
         }
@@ -108,15 +105,22 @@ polinomio * poli_mult(polinomio *p, polinomio *q){
 polinomio * poli_div(polinomio *p, polinomio *q){
     // TODO: Implemente aqui a solucao para operacao que divide dois polinomios e gera um terceiro
     int grau_d = p->grau - q->grau;
+    // Cira o polinomio resultante já com o grau correto
     polinomio *d = poli_create(grau_d);
+    // Cria um polinomio auxiliar que muda a cada divisao feita, tambem é possivel retornar o resto caso fosse desejado
     polinomio *aux = p;
+    // Loop para fazer as divisoes
     while (grau_d >= 0) {
+        // Calcula coeficiente do grau "grau_d" do polinomio resultado e insere no d
         int parcial = aux->coeficientes[aux->grau]/q->coeficientes[q->grau];
         poli_ins_termo(d, grau_d, parcial);
+        // Loop para preencher o polinomio auxiliar para a proxima divisao
         for (int i = 0; i < grau_d; i++) {
             poli_ins_termo(aux, grau_d - i, aux->coeficientes[aux->grau - i - 1] - (q->coeficientes[q->grau - i] * parcial));
         }
+        // Atualiza o indices dos polinomios manipulados
         grau_d--;
+        aux->grau--;
     }
 
     return d;
