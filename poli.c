@@ -25,6 +25,8 @@ polinomio * poli_create(int grau){
 
 void poli_destroy(polinomio **p){
     // TODO: Implemente aqui a solucao para operacao destroy
+    free((*p)->coeficientes);
+    free(*p);
     *p = NULL;
     return;
 }
@@ -80,6 +82,8 @@ polinomio * poli_soma(polinomio *p, polinomio *q){
             pq->coeficientes[i] = maior->coeficientes[i] + menor->coeficientes[i];
         }
     }
+    poli_destroy(&menor);
+    poli_destroy(&maior);
     
     return pq;
 }
@@ -122,6 +126,8 @@ polinomio * poli_div(polinomio *p, polinomio *q){
         grau_d--;
         aux->grau--;
     }
+
+    poli_destroy(&aux);
 
     return d;
 }
