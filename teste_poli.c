@@ -1,3 +1,8 @@
+//Integrantes
+//Jiye Huang 10438990
+//Mateus Ribeiro Cerqueira 10443901
+
+
 /*
 Compile com:
 gcc -g poli.c teste_poli.c -o teste_poli
